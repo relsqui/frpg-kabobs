@@ -12,7 +12,8 @@ SPIKE_BOOST = 2000          # spike prices add SPIKE_BOOST to the price
 # Simulation parameters
 SIMULATION_HOURS = 10000000
 PRINT_HOURLY = False        # set this to True to see what every investor does every hour
-OUTPUT_FILE = None          # set to a filename in quotes to output to a file
+OUTPUT_FILE = None          # set to a filename in quotes to output to a file (recommended with PRINT_HOURLY)
+DOT_COUNT = 100000          # print a dot every DOT_COUNT hours to see progress
 
 class Investor(object):
   def __init__(self, buy_policy, sell_policy):
@@ -41,6 +42,9 @@ class Investor(object):
         self.trades += 1
         return f"{self.name} bought."
     if price < 9800 or price > 10200:
+      # a "miss" is a good price we don't trade at.
+      # misses/trades is a measure of how good a strategy feels,
+      # not how well it works
       self.misses += 1
     return f"{self.name} waited."
 
@@ -72,16 +76,21 @@ def generate_investors():
 
 def simulate(hours, filehandle):
   investors = generate_investors()
+  dot_counter = 0
   for _ in range(hours):
+    dot_counter += 1
     price = get_price()
     for investor in investors:
       investor_decision = investor.maybe_trade_at(price)
       if PRINT_HOURLY:
         print(investor_decision)
+    if dot_counter == DOT_COUNT:
+      print(".", end="", file=sys.stderr)
+      dot_counter = 0
   investors.sort(key=lambda i: i.profit/hours, reverse=True)
   results = [[i.buy_policy, i.sell_policy, i.misses/i.trades, i.profit/hours] for i in investors]
   print(f"Results over {hours} hours:\n", file=filehandle)
-  print(tabulate(results, headers=["Buy @", "Sell @", "Misses/Trades", "Profit/Hour"]), file=filehandle)
+  print(tabulate(results, headers=["Buy @", "Sell @", "Misses/Trades", "Profit/Kabob/Hour"]), file=filehandle)
 
 def main():
   if OUTPUT_FILE is not None:
