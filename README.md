@@ -2,7 +2,7 @@
 
 This python script simulates ten million (by default) hours of steak kabob prices and a set of investors with policies about when they buy and sell, then prints a table showing how much silver each investor made. You can tinker with its behavior by changing a few all-caps variables near the top of the script.
 
-If you have git and python 3 installed, you can get it and try it like this:
+If you have [git](https://git-scm.com/downloads) and [python 3](https://www.python.org/downloads/) installed, you can get it and try it like this:
 
 ```
 git clone https://github.com/relsqui/frpg-kabobs.git
@@ -18,7 +18,7 @@ python ./kabobs.py
 Because I don't know the real algorithm for kabob prices, I've implemented some guesses based on limited history data. They are:
 
 * Prices are distributed uniformly between 9500-10500. (Minimum/maximum prices are configurable in the settings.)
-* About one time in thirty (configurable), the price spikes.
+* About one time in 24 (configurable), the price spikes.
 * A spike price adds a flat 2000 silver (configurable).
 
 ## Limitations
@@ -32,27 +32,48 @@ Investors also do not have limited silver (they can always buy kabobs if they ha
 ```
 Results over 10000000 hours:
 
-Buy @      Sell @        Misses/Trades    Profit/Kabob/Hour
----------  ----------  ---------------  -------------------
-under10k   over10k            0.614027          153.075
-under10k   over10k200         0.782913          149.106
-under10k   profitable         0.483306          133.94
-under9800  over10k200         1.00562           132.884
-under9800  over10k            0.836396          132.398
-always     over10k200         0.449399          110.728
-under9800  profitable         0.647066          108.215
-under10k   always             0.333497          103.21
-always     over10k            0.28051           101.008
-under9800  always             0.556048           93.6886
-always     profitable       676.392               0.202856
-always     always             0                  -0.0990158
+Buy @       Sell @         Misses/Trades    Profit/Kabob/Hour
+----------  -----------  ---------------  -------------------
+under_10k   over_10k            0.509348          139.837
+under_10k   profit_200          0.525999          134.91
+under_10k   over_10k200         0.665771          133.071
+under_10k   any_profit          0.423291          123.038
+under_9800  over_10k            0.603559          122.342
+under_9800  over_10k200         0.720472          120.036
+under_9800  profit_500          0.70271           119.992
+under_9800  profit_200          0.565063          115.377
+under_10k   profit_500          1.38037           102.038
+under_9800  any_profit          0.493718          101.092
+always      over_10k200         0.70743            96.7132
+under_10k   always              0.242639           94.5383
+always      over_10k            0.368167           92.0295
+under_9800  always              0.404132           87.54
+always      any_profit        781.901               0.213334
+always      always              0                   0.0485756
+always      profit_200     270269                   0.0011535
+always      profit_500     370369                   0.0010892
 ```
 
-Each row represents one investor. The first two columns are their trade policies. An investor with the `under10k`/`over10k` policies, for example, will buy kabobs at *any* price below 10,000 (assuming their inventory is empty) and sell at *any* price above 10,000 (assuming their inventory is full). The `always` policy accepts any price (buy every hour that you don't have bobs, sell every hour that you do), and the `profitable` sell policy sells kabobs for any price greater than the price they were bought at.
+Each row represents one investor who considered trading every hour. The first two columns are the policies they use to decide whether to trade (see below).
 
-The misses/trades column measures how many "good" prices were "missed" -- that is, the investor didn't get to buy for a very low price (because they already had kabobs) or sell for a very high price (because they didn't have any or their sell policy didn't permit it). It's included as a measure of how good an investment strategy might feel to an actual human executing it. A higher number is more frustrating ("argh, I wish I could buy/sell right now"), and a lower number is less.
+The misses/trades column measures how many "good" prices were "missed" -- that is, the investor didn't get to buy for a very low price (because they already had kabobs) or sell for a very high price (because they didn't have any or their sell policy didn't permit it). Consider it a measure of how annoying an investment strategy might feel to an actual human executing it: a higher number is more frustrating ("argh, I wish I could buy/sell right now"), and a lower number is less. It's included in the table to show how little this correlates with actually making money.
 
-The last column is the good stuff: how much actual profit did the investor make on each kabob bought, divided by the number of hours simulated.
+The last column is the good stuff: how much average profit did the investor make on each kabob?
+
+## Trade Policies
+
+* `always`: buys or sells if possible, regardless of the price.
+* `under_####`/`over_####`: buys or sells at that price threshold.
+* `lte_####`/`gte_####`: as above, but also buys or sells at the exact threshold (less/greater-than-or-equal).
+* `any_profit`: sells when the price is over the last price the investor bought at.
+* `profit_###`: sells when the profit per kabob would be at least that amount.
+
+You can add trade policies to test by adding to the `buy_policies` and `sell_policies` dictionaries. The structure is this:
+
+* Buy policies: `*name* = lambda price: *expression*`
+* Sell policies: `*name* = lambda price, bought_at: *expression*`
+
+Where `*name*` is the description that will show up in the table and `*expression* ` is a python expression that evaluates to `True` if the policy says to trade and `False` otherwise. The expressions can include the variable `price` to mean the current kabob price, and sell policies can include `bought_at` to mean the price at which the currently-held kabobs were bought. See the existing policies for examples.
 
 ## So how much silver can I make?
 

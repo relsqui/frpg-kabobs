@@ -6,14 +6,16 @@ from tabulate import tabulate
 # Price calculation parameters
 MIN_PRICE = 9500
 MAX_PRICE = 10500
-SPIKE_FREQUENCY = 30        # rate of price spikes = 1/SPIKE_FREQUENCY
-SPIKE_BOOST = 2000          # spike prices add SPIKE_BOOST to the price
+LOW_MISS = 9700             # how low a price feels bad to not buy?
+HIGH_MISS = 10300           # how high a price feels bad to not sell?
+SPIKE_FREQUENCY = 24        # rate of price spikes = 1/SPIKE_FREQUENCY
+SPIKE_BOOST = 1000          # spike prices add SPIKE_BOOST to the price
 
 # Simulation parameters
 SIMULATION_HOURS = 10000000
-PRINT_HOURLY = False        # set this to True to see what every investor does every hour
-OUTPUT_FILE = None          # set to a filename in quotes to output to a file (recommended with PRINT_HOURLY)
-DOT_COUNT = 100000          # print a dot every DOT_COUNT hours to see progress
+PRINT_HOURLY = False                # set this to True to see what every investor does every hour
+OUTPUT_FILE = True                  # set to a filename in quotes to output to a file (recommended with PRINT_HOURLY)
+DOT_COUNT = SIMULATION_HOURS/100    # print a dot to show progress every DOT_COUNT simulated hours
 
 class Investor(object):
   def __init__(self, buy_policy, sell_policy):
@@ -41,24 +43,29 @@ class Investor(object):
         self.bought_at = price
         self.trades += 1
         return f"{self.name} bought."
-    if price < 9800 or price > 10200:
+    if price < self.bought_at or price < LOW_MISS or price > HIGH_MISS:
       # a "miss" is a good price we don't trade at.
-      # misses/trades is a measure of how good a strategy feels,
-      # not how well it works
+      # misses/trades is a measure of how a strategy feels, not how well it works
       self.misses += 1
     return f"{self.name} waited."
 
 buy_policies = dict(
   always = lambda price: True,
-  under10k = lambda price: price < 10000,
-  under9800 = lambda price: price < 9800,
+  under_10k = lambda price: price < 10000,
+  lte_10k = lambda price: price <= 10000,
+  under_9800 = lambda price: price < 9800,
+  lte_9800 = lambda price: price <= 9800,
 )
 
 sell_policies = dict(
   always = lambda price, bought_at: True,
-  profitable = lambda price, bought_at: price > bought_at,
-  over10k = lambda price, bought_at: price > 10000,
-  over10k200 = lambda price, bought_at: price > 10200,
+  any_profit = lambda price, bought_at: price > bought_at,
+  profit_500 = lambda price, bought_at: price >= bought_at + 500,
+  profit_200 = lambda price, bought_at: price >= bought_at + 200,
+  over_10k = lambda price, bought_at: price > 10000,
+  gte_10k = lambda price, bought_at: price >= 10000,
+  over_10k200 = lambda price, bought_at: price > 10200,
+  gte_10k200 = lambda price, bought_at: price >= 10200,
 )
 
 def get_price():
@@ -87,6 +94,7 @@ def simulate(hours, filehandle):
     if dot_counter == DOT_COUNT:
       print(".", end="", file=sys.stderr)
       dot_counter = 0
+  print("", file=sys.stderr)
   investors.sort(key=lambda i: i.profit/hours, reverse=True)
   results = [[i.buy_policy, i.sell_policy, i.misses/i.trades, i.profit/hours] for i in investors]
   print(f"Results over {hours} hours:\n", file=filehandle)
