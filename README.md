@@ -17,7 +17,7 @@ pip install -r requirements.txt
 python ./kabobs.py
 ```
 
-If it's working it will slowly print dots for a couple minutes (depending on computer speed) and then a table of numbers. You can tinker with settings by changing the all-caps variables near the top of the [kabobs.py](kabobs.py). See [#trade-policies](Trade Policies) for how to add trade policies.
+If it's working it will slowly print dots for a couple minutes (depending on computer speed) and then a table of numbers. You can tinker with settings by changing the all-caps variables near the top of the [kabobs.py](kabobs.py). See [Trade Policies](#trade-policies) for how to add trade policies.
 
 ## Assumptions
 
@@ -62,7 +62,7 @@ always      profit_500     370369                   0.0010892
 
 Each row represents one investor who considered trading every hour. The first two columns are the policies they use to decide whether to trade (see below).
 
-The misses/trades column measures how many "good" prices were "missed" -- that is, the investor didn't get to buy for a very low price (because they already had kabobs) or sell for a very high price (because they didn't have any or their sell policy didn't permit it). Consider it a measure of how annoying an investment strategy might feel to an actual human executing it: a higher number is more frustrating ("argh, I wish I could buy/sell right now"), and a lower number is less. It's included in the table to show how little this correlates with actually making money.
+The misses/trades column measures how many "good" prices were "missed" -- that is, the investor didn't get to buy for a very low price (because they already had kabobs) or sell for a very high price (because they didn't have any or their sell policy didn't permit it) -- compared to how many trades were actually made. Consider it a measure of how annoying an investment strategy might feel to a real-life human following it: a higher number is more frustrating ("argh, I wish I could buy/sell right now"), and a lower number is less. It's included in the table to show how little this correlates with actually making money.
 
 The last column is the good stuff: how much average profit did the investor make on each kabob?
 
