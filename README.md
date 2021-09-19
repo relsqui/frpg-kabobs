@@ -76,10 +76,10 @@ The last column is the good stuff: how much average profit did the investor make
 
 You can add trade policies to test by adding to the `buy_policies` and `sell_policies` sections. The structure is this:
 
- Buy policies: `NAME = lambda price: EXPRESSION`
- Sell policies: `NAME = lambda price, bought_at: EXPRESSION`
+ * Buy policies: `<NAME> = lambda price: <EXPRESSION>`
+ * Sell policies: `<NAME> = lambda price, bought_at: <EXPRESSION>`
 
-Where `NAME` is the description that will show up in the table and `EXPRESSION` is a python expression that evaluates to `True` if the policy says to trade and `False` otherwise. The expressions can include the variable `price` to mean the current kabob price, and sell policies can include `bought_at` to mean the price at which the currently-held kabobs were bought. See the existing policies for examples.
+Where `<NAME>` is the description that will show up in the table and `<EXPRESSION>` is a python expression that evaluates to `True` if the policy says to trade and `False` otherwise. The expressions can include the variable `price` to mean the current kabob price, and sell policies can include `bought_at` to mean the price at which the currently-held kabobs were bought. See the existing policies for examples.
 
 ## So how much silver can I make?
 
