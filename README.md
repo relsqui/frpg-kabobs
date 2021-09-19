@@ -1,8 +1,14 @@
 # FarmRPG Kabob Price Simulator
 
-This python script simulates ten million (by default) hours of steak kabob prices and a set of investors with policies about when they buy and sell, then prints a table showing how much silver each investor made. You can tinker with its behavior by changing a few all-caps variables near the top of the script.
+This python script simulates ten million (by default) hours of steak kabob prices and a set of investors with policies about when they buy and sell, then prints a table showing how much silver each investor made.
 
-If you have [git](https://git-scm.com/downloads) and [python 3](https://www.python.org/downloads/) installed, you can get it and try it like this:
+## No math please, just advice
+
+Buy under 10,000. Sell over 10,000. Check prices as often as convenient. Don't overthink it. :)
+
+## Installation
+
+You don't need to download this if you just want to read about how it works and what the results are, but if you want to play with it, you can install [git](https://git-scm.com/downloads) and [python 3](https://www.python.org/downloads/) and do this (Windows users, use Powershell or the WSL, not cmd):
 
 ```
 git clone https://github.com/relsqui/frpg-kabobs.git
@@ -11,7 +17,7 @@ pip install -r requirements.txt
 python ./kabobs.py
 ```
 
-(Windows users, use Powershell or the WSL instead of cmd.)
+If it's working it will slowly print dots for a couple minutes (depending on computer speed) and then a table of numbers. You can tinker with settings by changing the all-caps variables near the top of the [kabobs.py](kabobs.py). See [#trade-policies](Trade Policies) for how to add trade policies.
 
 ## Assumptions
 
@@ -63,26 +69,22 @@ The last column is the good stuff: how much average profit did the investor make
 ## Trade Policies
 
 * `always`: buys or sells if possible, regardless of the price.
-* `under_####`/`over_####`: buys or sells at that price threshold.
+* `under_####`/`over_####`: buys or sells above or below that price threshold.
 * `lte_####`/`gte_####`: as above, but also buys or sells at the exact threshold (less/greater-than-or-equal).
-* `any_profit`: sells when the price is over the last price the investor bought at.
+* `any_profit`: sells when the price is more than the price the investor bought kabobs at.
 * `profit_###`: sells when the profit per kabob would be at least that amount.
 
-You can add trade policies to test by adding to the `buy_policies` and `sell_policies` dictionaries. The structure is this:
+You can add trade policies to test by adding to the `buy_policies` and `sell_policies` sections. The structure is this:
 
-* Buy policies: `*name* = lambda price: *expression*`
-* Sell policies: `*name* = lambda price, bought_at: *expression*`
+ Buy policies: `NAME = lambda price: EXPRESSION`
+ Sell policies: `NAME = lambda price, bought_at: EXPRESSION`
 
-Where `*name*` is the description that will show up in the table and `*expression* ` is a python expression that evaluates to `True` if the policy says to trade and `False` otherwise. The expressions can include the variable `price` to mean the current kabob price, and sell policies can include `bought_at` to mean the price at which the currently-held kabobs were bought. See the existing policies for examples.
+Where `NAME` is the description that will show up in the table and `EXPRESSION` is a python expression that evaluates to `True` if the policy says to trade and `False` otherwise. The expressions can include the variable `price` to mean the current kabob price, and sell policies can include `bought_at` to mean the price at which the currently-held kabobs were bought. See the existing policies for examples.
 
 ## So how much silver can I make?
 
 If the simulation were exactly accurate (which I have no reason to believe is the case), you could estimate your daily average profit like this: find the row for the strategy you use, and multiply the profit number by your inventory capacity and the number of hours in a day when you will check the price. (Hours you don't even consider trading effectively don't exist for this purpose.)
 
-For example: I plan to buy under 10k and sell over 10k, so the estimated profit per kabob per hour is 153. If my inventory size is 500 and I have time to check the price four times a day, 153 * 500 * 4 = 306,000 estimated average profit.
+For example: I plan to buy under 10k and sell over 10k, so the estimated profit per kabob per hour is about 140. If my inventory size is 500 and I have time to check the price four times a day, 140 * 500 * 4 = 280,000 estimated average profit.
 
-It's very important that this is an *average*. The real number has a 50/50 chance to be lower or higher on any given day. This math is for estimating long-term profits; the longer you trade and the more often you check the price, the better the overall outcome will be.
-
-## No math please, just advice
-
-Buy under 10,000. Sell over 10,000. Check prices as often as convenient. Don't overthink it. :)
+It's very important that this is an *average*. The real number has a 50/50 chance to be lower or higher on any given day. The longer you trade and the more often you check prices, the better your results will be. Nevertheless, don't use this estimate to plan your spending, use it to compare the value of kabob trading to other ways you could use your silver.

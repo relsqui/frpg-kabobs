@@ -14,7 +14,7 @@ SPIKE_BOOST = 1000          # spike prices add SPIKE_BOOST to the price
 # Simulation parameters
 SIMULATION_HOURS = 10000000
 PRINT_HOURLY = False                # set this to True to see what every investor does every hour
-OUTPUT_FILE = True                  # set to a filename in quotes to output to a file (recommended with PRINT_HOURLY)
+OUTPUT_FILE = None                  # set to a filename in quotes to output to a file (recommended with PRINT_HOURLY)
 DOT_COUNT = SIMULATION_HOURS/100    # print a dot to show progress every DOT_COUNT simulated hours
 
 class Investor(object):
