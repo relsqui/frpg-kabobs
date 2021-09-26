@@ -12,7 +12,7 @@ SPIKE_FREQUENCY = 24        # rate of price spikes = 1/SPIKE_FREQUENCY
 SPIKE_BOOST = 1000          # spike prices add SPIKE_BOOST to the price
 
 # Simulation parameters
-SIMULATION_HOURS = 10000000
+SIMULATION_HOURS = 100000000
 PRINT_HOURLY = False                # set this to True to see what every investor does every hour
 OUTPUT_FILE = None                  # set to a filename in quotes to output to a file (recommended with PRINT_HOURLY)
 DOT_COUNT = SIMULATION_HOURS/100    # print a dot to show progress every DOT_COUNT simulated hours
@@ -50,22 +50,26 @@ class Investor(object):
     return f"{self.name} waited."
 
 buy_policies = dict(
-  always = lambda price: True,
-  under_10k = lambda price: price < 10000,
   lte_10k = lambda price: price <= 10000,
-  under_9800 = lambda price: price < 9800,
-  lte_9800 = lambda price: price <= 9800,
+  lte_9950 = lambda price: price <= 9950,
+  # under_9800 = lambda price: price < 9800,
+  # always = lambda price: True,
+  # under_10k = lambda price: price < 10000,
+  # lte_9800 = lambda price: price <= 9800,
 )
 
 sell_policies = dict(
-  always = lambda price, bought_at: True,
-  any_profit = lambda price, bought_at: price > bought_at,
-  profit_500 = lambda price, bought_at: price >= bought_at + 500,
+  profit_200_and_over10k = lambda price, bought_at: price >= bought_at + 200 and price > 10000,
+  profit_100_and_over10k = lambda price, bought_at: price >= bought_at + 100 and price > 10000,
   profit_200 = lambda price, bought_at: price >= bought_at + 200,
   over_10k = lambda price, bought_at: price > 10000,
-  gte_10k = lambda price, bought_at: price >= 10000,
-  over_10k200 = lambda price, bought_at: price > 10200,
-  gte_10k200 = lambda price, bought_at: price >= 10200,
+  over_10k50 = lambda price, bought_at: price > 10050,
+  # any_profit = lambda price, bought_at: price > bought_at,
+  # over_10k200 = lambda price, bought_at: price > 10200,
+  # gte_10k = lambda price, bought_at: price >= 10000,
+  # gte_10k200 = lambda price, bought_at: price >= 10200,
+  # always = lambda price, bought_at: True,
+  # profit_500 = lambda price, bought_at: price >= bought_at + 500,
 )
 
 def get_price():
@@ -91,10 +95,11 @@ def simulate(hours, filehandle):
       investor_decision = investor.maybe_trade_at(price)
       if PRINT_HOURLY:
         print(investor_decision)
-    if dot_counter == DOT_COUNT:
+    if dot_counter == DOT_COUNT and not PRINT_HOURLY:
       print(".", end="", file=sys.stderr)
       dot_counter = 0
-  print("", file=sys.stderr)
+  if not PRINT_HOURLY:
+    print("", file=sys.stderr)
   investors.sort(key=lambda i: i.profit/hours, reverse=True)
   results = [[i.buy_policy, i.sell_policy, i.misses/i.trades, i.profit/hours] for i in investors]
   print(f"Results over {hours} hours:\n", file=filehandle)

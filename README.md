@@ -4,7 +4,7 @@ This python script simulates ten million (by default) hours of steak kabob price
 
 ## No math please, just advice
 
-Buy under 10,000. Sell over 10,000. Check prices as often as convenient. Don't overthink it. :)
+Buy under 10,000. Sell over 10,050. Check prices as often as convenient. Don't overthink it. :)
 
 ## Installation
 
@@ -34,6 +34,8 @@ Right now every investor buys or sells their entire inventory at once. (For arit
 Investors also do not have limited silver (they can always buy kabobs if they have room), and don't have any time constraints -- they don't care when reset happens, for example, which might affect real-life decisionmaking.
 
 ## Example Output
+
+This is an example with enough variety to explain how it works. The most recent output I thought was interesting enough to share is in [kabobs.log](kabobs.log).
 
 ```
 Results over 10000000 hours:
