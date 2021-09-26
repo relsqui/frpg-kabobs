@@ -26,6 +26,7 @@ Because I don't know the real algorithm for kabob prices, I've implemented some 
 * Prices are distributed uniformly between 9500-10500. (Minimum/maximum prices are configurable in the settings.)
 * About one time in 24 (configurable), the price spikes.
 * A spike price adds a flat 2000 silver (configurable).
+  * _Note: Recent prices disprove this spike price model. I'll update the defaults if I get a better idea of how it works. It makes a small enough difference not to affect the overall math much, though._
 
 ## Limitations
 
