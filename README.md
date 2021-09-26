@@ -4,7 +4,7 @@ This python script simulates ten million (by default) hours of steak kabob price
 
 ## No math please, just advice
 
-Buy under 10,000. Sell over 10,050. Check prices as often as convenient. Don't overthink it. :)
+Buy under 10,000. Sell over 10,000. Check prices as often as convenient. Don't overthink it. :)
 
 ## Installation
 
